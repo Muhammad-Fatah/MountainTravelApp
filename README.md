@@ -8,7 +8,10 @@ Mountain Explore adalah aplikasi wisata pegunungan yang dikembangkan menggunakan
 -  Menandai destinasi favorit.
 -  Fitur pencarian untuk menemukan destinasi dengan cepat.
 -  Navigasi menggunakan Google Nav Bar (GNav).
--  Orientasi hanya portrait (fitur landscape dinonaktifkan).
+
+## link aplikasi
+https://drive.google.com/file/d/1PdasNhrgFkguKP9g_Y9wntU310gSOAa0/view?usp=sharing
+
 
 ##  Author
 - Muhammad Fatah Hidayatul Husna
