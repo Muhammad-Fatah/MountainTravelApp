@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mounttravel/Models/Destination.dart';
+import '../Models/Destination.dart'; // Import model destinasi
 
 class DestinationScreen extends StatefulWidget {
   final Destination destination;
@@ -11,6 +11,8 @@ class DestinationScreen extends StatefulWidget {
 }
 
 class _DestinationScreenState extends State<DestinationScreen> {
+  bool _isFavorite = false; // Variabel status favorit
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -19,21 +21,22 @@ class _DestinationScreenState extends State<DestinationScreen> {
           children: [
             Stack(
               children: [
-                // Gambar Latar
+                // Gambar utama destinasi
                 Container(
                   height: MediaQuery.of(context).size.height / 2 + 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       image: AssetImage(widget.destination.image),
                     ),
                   ),
                 ),
-                // Tombol kembali dan notifikasi di atas gambar
+
+                // Tombol kembali & notifikasi di atas gambar
                 Positioned(
                   top: 20,
                   right: 10,
@@ -41,11 +44,12 @@ class _DestinationScreenState extends State<DestinationScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Tombol kembali ke halaman sebelumnya
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);  // Tombol back
+                          Navigator.pop(context);
                         },
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
                           child: Icon(
@@ -54,12 +58,12 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           ),
                         ),
                       ),
+                      // Tombol notifikasi
                       GestureDetector(
                         onTap: () {
-                          // Tindakan ketika tombol favorit ditekan
-                          print('Favorit ditekan');
+                          print('Notifikasi ditekan');
                         },
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
                           child: Icon(
@@ -71,7 +75,8 @@ class _DestinationScreenState extends State<DestinationScreen> {
                     ],
                   ),
                 ),
-                // Tombol favorit yang berada di bagian bawah gambar
+
+                // Bagian tombol favorit
                 Positioned(
                   bottom: 0,
                   right: 10,
@@ -83,22 +88,23 @@ class _DestinationScreenState extends State<DestinationScreen> {
                           color: Colors.black.withOpacity(0.3),
                           spreadRadius: 2,
                           blurRadius: 2,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     transform: Matrix4.translationValues(0, 20, 0),
                     child: GestureDetector(
                       onTap: () {
-                        // Tindakan ketika tombol favorit ditekan
-                        print('Favorit ditekan');
+                        setState(() {
+                          _isFavorite = !_isFavorite; // Mengubah status favorit
+                        });
                       },
                       child: CircleAvatar(
                         radius: 25,
                         backgroundColor: Colors.white,
                         child: Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+                          _isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: _isFavorite ? Colors.red : Colors.grey,
                           size: 30,
                         ),
                       ),
@@ -107,28 +113,27 @@ class _DestinationScreenState extends State<DestinationScreen> {
                 ),
               ],
             ),
+
+            // Teks nama dan deskripsi destinasi
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     widget.destination.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 35,
+                      fontSize: 32,
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     widget.destination.description,
-                    style: TextStyle(
-                      fontSize: 20,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      height: 1.5,
                     ),
                   ),
                 ],
