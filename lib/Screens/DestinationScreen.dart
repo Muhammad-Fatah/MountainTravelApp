@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Models/Destination.dart'; // Import model destinasi
+import '../Models/Destination.dart';
 
 class DestinationScreen extends StatefulWidget {
   final Destination destination;
@@ -11,7 +11,7 @@ class DestinationScreen extends StatefulWidget {
 }
 
 class _DestinationScreenState extends State<DestinationScreen> {
-  bool _isFavorite = false; // Variabel status favorit
+  bool _isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class _DestinationScreenState extends State<DestinationScreen> {
           children: [
             Stack(
               children: [
-                // Gambar utama destinasi
+                // Gambar dari URL (Network)
                 Container(
                   height: MediaQuery.of(context).size.height / 2 + 50,
                   decoration: BoxDecoration(
@@ -31,12 +31,12 @@ class _DestinationScreenState extends State<DestinationScreen> {
                     ),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage(widget.destination.image),
+                      image: NetworkImage(widget.destination.image),
                     ),
                   ),
                 ),
 
-                // Tombol kembali & notifikasi di atas gambar
+                // Tombol kembali & notifikasi
                 Positioned(
                   top: 20,
                   right: 10,
@@ -44,7 +44,6 @@ class _DestinationScreenState extends State<DestinationScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Tombol kembali ke halaman sebelumnya
                       GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
@@ -52,31 +51,24 @@ class _DestinationScreenState extends State<DestinationScreen> {
                         child: const CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
+                          child: Icon(Icons.arrow_back, color: Colors.black),
                         ),
                       ),
-                      // Tombol notifikasi
                       GestureDetector(
                         onTap: () {
-                          print('Notifikasi ditekan');
+                          // Aksi notifikasi (bisa dikembangkan)
                         },
                         child: const CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.notifications,
-                            color: Colors.black,
-                          ),
+                          child: Icon(Icons.notifications, color: Colors.black),
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                // Bagian tombol favorit
+                // Tombol favorit
                 Positioned(
                   bottom: 0,
                   right: 10,
@@ -96,7 +88,7 @@ class _DestinationScreenState extends State<DestinationScreen> {
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          _isFavorite = !_isFavorite; // Mengubah status favorit
+                          _isFavorite = !_isFavorite;
                         });
                       },
                       child: CircleAvatar(
@@ -114,13 +106,12 @@ class _DestinationScreenState extends State<DestinationScreen> {
               ],
             ),
 
-            // Teks nama dan deskripsi destinasi
+            // Konten: Nama dan deskripsi
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
                   Text(
                     widget.destination.name,
                     style: const TextStyle(
@@ -130,11 +121,10 @@ class _DestinationScreenState extends State<DestinationScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    widget.destination.description,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1.5,
-                    ),
+                    widget.destination.description.isNotEmpty
+                        ? widget.destination.description
+                        : "Deskripsi belum tersedia.",
+                    style: const TextStyle(fontSize: 18, height: 1.5),
                   ),
                 ],
               ),

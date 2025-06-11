@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:mounttravel/Models/Destination.dart';
 import 'package:mounttravel/Screens/DestinationScreen.dart';
+import 'package:mounttravel/Services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,12 +14,35 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   String _searchQuery = "";
 
+  List<Destination> _allDestinations = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  void _fetchData() async {
+    try {
+      List<Destination> data = await ApiService.fetchDestinations();
+      setState(() {
+        _allDestinations = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Gagal mengambil data: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
-    // Filter untuk destinasi berdasarkan pencarian
-    List<Destination> filteredDestinations = destinations
+    List<Destination> filteredDestinations = _allDestinations
         .where((dest) => dest.name.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
 
@@ -38,19 +62,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 30,
+                      fontSize: 28,
                     ),
                   ),
                   Icon(
                     Icons.notifications,
-                    size: 30,
+                    size: 28,
                   )
                 ],
               ),
             ),
-            // Search Field
+
+            // Search Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 onChanged: (value) {
                   setState(() {
@@ -58,19 +83,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
                 decoration: InputDecoration(
+                  hintText: 'Cari gunung...',
+                  prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(40)),
-                  ),
-                  hintText: 'Kemana lagi kita?',
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
               ),
             ),
-            // Carousel
-            Expanded(
+
+            SizedBox(height: 10),
+
+            // Body Content
+            _isLoading
+                ? Expanded(child: Center(child: CircularProgressIndicator()))
+                : filteredDestinations.isEmpty
+                ? Expanded(child: Center(child: Text("Tidak ada data ditemukan.")))
+                : Expanded(
               child: PageView.builder(
                 itemCount: filteredDestinations.length,
                 controller: PageController(viewportFraction: isPortrait ? 0.6 : 0.4),
@@ -82,7 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DestinationScreen(destination: destination),
+                          builder: (context) =>
+                              DestinationScreen(destination: destination),
                         ));
                       },
                       child: Column(
@@ -96,15 +126,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderRadius: BorderRadius.circular(30),
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
-                                    image: AssetImage(destination.image),
+                                    image: NetworkImage(destination.image),
                                   ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 5,
                                       spreadRadius: 2,
-                                      blurRadius: 2,
                                       offset: Offset(2, 3),
-                                    ),
+                                    )
                                   ],
                                 ),
                               ),
@@ -114,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             destination.name,
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -127,36 +157,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        bottomNavigationBar: Container( //untuk mengatur tombol navigasi
+        bottomNavigationBar: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white54,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(30),
           ),
           child: GNav(
             gap: 8,
             activeColor: Colors.blue,
-            iconSize: 25,
-            padding: EdgeInsets.all(5),
+            iconSize: 24,
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             duration: Duration(milliseconds: 800),
-            tabBackgroundColor: Colors.white,
+            tabBackgroundColor: Colors.grey.shade200,
             tabs: [
-              GButton(
-                icon: Icons.home,
-                text: 'Home',
-              ),
-              GButton(
-                icon: Icons.favorite_border,
-                text: 'Favorite',
-              ),
-              GButton(
-                icon: Icons.map,
-                text: 'Map',
-              ),
-              GButton(
-                icon: Icons.person_outline,
-                text: 'Profile',
-              ),
+              GButton(icon: Icons.home, text: 'Home'),
+              GButton(icon: Icons.favorite_border, text: 'Favorite'),
+              GButton(icon: Icons.map, text: 'Map'),
+              GButton(icon: Icons.person_outline, text: 'Profile'),
             ],
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
