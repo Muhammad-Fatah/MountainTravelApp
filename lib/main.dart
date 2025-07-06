@@ -1,20 +1,33 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mounttravel/Screens/HomeScreen.dart';
+import 'firebase_options.dart';
 
+// Import screen
+import 'Screens/LoginScreen.dart';
+import 'Screens/RegisterScreen.dart';
+import 'Screens/HomeScreen.dart';
+import 'Screens/ProfileScreen.dart';
 
-// Fungsi utama untuk menjalankan aplikasi
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
-// MyApp adalah StatelessWidget karena tidak ada perubahan state
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Menggunakan MaterialApp untuk aplikasi berbasis Material Design
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Menonaktifkan banner debug
-      home: HomeScreen(), // Menetapkan halaman utama aplikasi
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/home': (context) => HomeScreen(),
+        '/profile': (context) => ProfileScreen(),
+      },
     );
   }
 }

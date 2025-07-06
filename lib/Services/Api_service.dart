@@ -9,7 +9,7 @@ class ApiService {
     final response = await http.get(
       Uri.parse(url),
       headers: {
-        'X-RapidAPI-Key': '8f1b817305mshc40981d2f9f4ccep11763fjsnf4ccad2c8d13',
+        'X-RapidAPI-Key': 'd8ca191bcemsh4dc5e0738514493p145d40jsn4ced6472d2a1',
         'X-RapidAPI-Host': 'mountain-api1.p.rapidapi.com',
       },
     );
@@ -20,8 +20,10 @@ class ApiService {
       return data.map((json) => Destination(
         name: json['name'] ?? 'Unknown',
         description: json['description'] ?? 'Tidak ada deskripsi',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/6/62/Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg', // placeholder gambar
+        image: json['mountain_img'] ?? '',
+        altitude: json['altitude'] ?? 'Unknown',
       )).toList();
+
     } else {
       print("Status code: ${response.statusCode}");
       throw Exception('Gagal mengambil data dari API: ${response.statusCode}');

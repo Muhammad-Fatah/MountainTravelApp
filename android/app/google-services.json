@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "422067880433",
+    "project_id": "final-project-tcc-425305",
+    "storage_bucket": "final-project-tcc-425305.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422067880433:android:270c1b922232d72c540450",
+        "android_client_info": {
+          "package_name": "com.example.mounttravel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAX_A6ESJh_xLb_B_sCn_ZirsYUrjSedZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
