@@ -11,7 +11,6 @@ Aplikasi mobile berbasis Android untuk eksplorasi destinasi gunung, dibangun men
 MountTravel adalah aplikasi mobile yang berfungsi sebagai panduan dan platform eksplorasi bagi para pecinta gunung. Pengguna dapat mendaftar, login, menjelajahi berbagai destinasi gunung, melihat informasi detail, dan mengelola profil mereka sendiri.
 
 ## Tangkapan Layar (Screenshots)
-*Catatan: Ganti `URL_SCREENSHOT` dengan URL gambar Anda yang sudah di-upload ke GitHub atau layanan hosting gambar lain.*
 
 | Login & Register                                     | Explore Screen           | Detail Destinasi              | Profil Pengguna           |
 | ---------------------------------------------------- | ------------------------ | ----------------------------- | ------------------------- |
@@ -61,6 +60,3 @@ Untuk menjalankan proyek ini di lingkungan lokal, ikuti langkah-langkah berikut:
 ## Pengembang
 - **Nama**: Muhammad Fatah
 - **GitHub**: [@Muhammad-Fatah](https'://github.com/Muhammad-Fatah)
-
-## Lisensi
-Proyek ini dilisensikan di bawah Lisensi MIT.
