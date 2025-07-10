@@ -13,9 +13,9 @@ MountTravel adalah aplikasi mobile yang berfungsi sebagai panduan dan platform e
 ## Tangkapan Layar (Screenshots)
 *Catatan: Ganti `URL_SCREENSHOT` dengan URL gambar Anda yang sudah di-upload ke GitHub atau layanan hosting gambar lain.*
 
-| Login & Register                                     | Explore Screen                                     | Detail Destinasi                                       | Profil Pengguna                                    |
-| ---------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------- |
-| ![Login](URL_SCREENSHOT_LOGIN.jpg) | ![Explore](URL_SCREENSHOT_EXPLORE.jpg) | ![Detail](URL_SCREENSHOT_DETAIL.jpg) | ![Profil](URL_SCREENSHOT_PROFIL.jpg) |
+| Login & Register                                     | Explore Screen           | Detail Destinasi              | Profil Pengguna           |
+| ---------------------------------------------------- | ------------------------ | ----------------------------- | ------------------------- |
+| ![Login](https://github.com/Muhammad-Fatah/MountainTravelApp/blob/main/assets/Screenshot_LoginScreen.png) | ![Explore](https://github.com/Muhammad-Fatah/MountainTravelApp/blob/main/assets/Screenshot_ExploreScreen.png) | ![Detail](https://github.com/Muhammad-Fatah/MountainTravelApp/blob/main/assets/Screenshot_DestinationScreen.png) | ![Profil](https://github.com/Muhammad-Fatah/MountainTravelApp/blob/main/assets/Screenshot_ProfileScreen.png) |
 
 ## Fitur Utama
 - **Autentikasi Pengguna**: Sistem pendaftaran (register) dan masuk (login) yang aman menggunakan Firebase Authentication.
