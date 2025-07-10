@@ -3,21 +3,33 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mounttravel/Models/Destination.dart';
 import 'package:mounttravel/Screens/DestinationScreen.dart';
-import 'package:mounttravel/Services/api_service.dart';
+import 'package:mounttravel/Services/Api_service.dart';
 import 'package:mounttravel/Widgets/CustomeDrawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../Widgets//colors.dart';
+import '../Widgets/Colors.dart';
 
+/// Screen utama yang menampilkan daftar destinasi yang bisa dijelajahi.
+///
+/// Fitur utama screen ini adalah mengambil data dari API, menampilkan dalam bentuk
+/// daftar, dan menyediakan fungsionalitas pencarian secara real-time.
 class ExploreScreen extends StatefulWidget {
+  const ExploreScreen({super.key});
+
   @override
-  _ExploreScreenState createState() => _ExploreScreenState();
+  State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  int _index = 0;
+  // Menyimpan query pencarian dari pengguna.
   String _searchQuery = "";
+  // Menyimpan daftar asli semua destinasi dari API.
   List<Destination> _allDestinations = [];
+  // Mengontrol state loading untuk menampilkan CircularProgressIndicator.
   bool _isLoading = true;
+
+  // Path ke asset gambar fallback jika gambar dari network gagal dimuat.
+  final String _defaultImageAssetPath = 'assets/default_mountain.jpg';
+  final String _defaultAvatarAssetPath = 'assets/default_avatar.jpg';
 
   @override
   void initState() {
@@ -25,32 +37,42 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _fetchData();
   }
 
-  void _fetchData() async {
+  /// Mengambil data destinasi dari ApiService.
+  ///
+  /// Fungsi ini menangani state loading dan juga potensi error saat pemanggilan API
+  /// menggunakan blok try-catch untuk memastikan aplikasi tetap stabil.
+  Future<void> _fetchData() async {
     try {
-      List<Destination> data = await ApiService.fetchDestinations();
-      print("Jumlah data: ${data.length}");
-      if (data.isNotEmpty) {
-        print("Contoh nama: ${data.first.name}");
-        print("Contoh lokasi: ${data.first.description}");
+      final data = await ApiService.fetchDestinations();
+      if (mounted) {
+        setState(() {
+          _allDestinations = data;
+          _isLoading = false;
+        });
       }
-      setState(() {
-        _allDestinations = data;
-        _isLoading = false;
-      });
     } catch (e) {
       print("Fetch error: $e");
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+        // Memberi feedback ke pengguna jika terjadi kegagalan.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat data: ${e.toString()}')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    // Menyesuaikan tampilan status bar agar konsisten dengan tema gelap.
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: AppColors.darkBackground,
       statusBarIconBrightness: Brightness.light,
     ));
 
-    List<Destination> filteredDestinations = _allDestinations
+    // Logika untuk memfilter destinasi berdasarkan query pencarian.
+    // Dijalankan setiap kali UI di-build ulang untuk hasil yang instan.
+    final List<Destination> filteredDestinations = _allDestinations
         .where((dest) => dest.name.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
 
@@ -59,11 +81,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.darkBackground,
-        drawer: CustomDrawer(),
+        drawer: const CustomDrawer(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Menu & Profile
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Row(
@@ -71,7 +92,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 children: [
                   Builder(
                     builder: (context) => IconButton(
-                      icon: Icon(Icons.menu, color: Colors.white, size: 30),
+                      icon: const Icon(Icons.menu, color: Colors.white, size: 30),
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                   ),
@@ -79,13 +100,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     radius: 22,
                     backgroundImage: user?.photoURL != null && user!.photoURL!.isNotEmpty
                         ? NetworkImage(user.photoURL!)
-                        : AssetImage('assets/default_avatar.jpg') as ImageProvider,
+                        : AssetImage(_defaultAvatarAssetPath) as ImageProvider,
                   ),
                 ],
               ),
             ),
 
-            // Title
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
@@ -98,84 +118,107 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 onChanged: (value) => setState(() => _searchQuery = value),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white10,
                   hintText: 'Cari gunung...',
-                  hintStyle: TextStyle(color: Colors.white),
-                  prefixIcon: Icon(Icons.search, color: Colors.white),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  hintStyle: const TextStyle(color: Colors.white),
+                  prefixIcon: const Icon(Icons.search, color: Colors.white),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
                   ),
                 ),
               ),
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // Content
-            _isLoading
-                ? Expanded(
-              child: Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
-            )
-                : filteredDestinations.isEmpty
-                ? Expanded(
-              child: Center(
-                child: Text(
-                  "Tidak ada data ditemukan.",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            )
-                : Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.all(16),
+            // Bagian ini secara dinamis menampilkan UI berdasarkan state:
+            // 1. Tampilkan loading indicator jika `_isLoading` true.
+            // 2. Tampilkan pesan "Tidak ada data" jika data kosong.
+            // 3. Tampilkan ListView jika data tersedia.
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                  : filteredDestinations.isEmpty
+                  ? const Center(child: Text("Tidak ada data ditemukan.", style: TextStyle(color: Colors.white)))
+                  : ListView.builder(
+                padding: const EdgeInsets.all(16),
                 itemCount: filteredDestinations.length,
                 itemBuilder: (context, i) {
                   final destination = filteredDestinations[i];
                   return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => DestinationScreen(destination: destination),
-                      ));
-                    },
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => DestinationScreen(destination: destination),
+                    )),
                     child: Container(
-                      margin: EdgeInsets.only(bottom: 16),
+                      margin: const EdgeInsets.only(bottom: 16),
                       height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(destination.image),
-                        ),
-                      ),
-                      alignment: Alignment.bottomLeft,
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        destination.name,
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black,
-                              blurRadius: 6,
-                            )
-                          ],
-                        ),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Image.network menangani state loading dan error internal,
+                          // dan akan menampilkan gambar fallback jika gagal.
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              destination.image,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, progress) {
+                                if (progress == null) return child;
+                                return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  _defaultImageAssetPath,
+                                  fit: BoxFit.cover,
+                                  // Memberi overlay gelap agar konsisten dengan gambar yg berhasil dimuat
+                                  color: Colors.black.withOpacity(0.4),
+                                  colorBlendMode: BlendMode.darken,
+                                );
+                              },
+                            ),
+                          ),
+                          // Gradient overlay untuk meningkatkan keterbacaan teks.
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                destination.name,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: const [Shadow(color: Colors.black, blurRadius: 6)],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

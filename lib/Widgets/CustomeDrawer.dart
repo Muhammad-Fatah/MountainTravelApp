@@ -31,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
                   SizedBox(height: 20),
                   _buildMenuItem("Log Out", () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, '/settings');
+                    Navigator.pushNamed(context, '/login');
                   }),
                 ],
               ),

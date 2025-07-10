@@ -1,18 +1,19 @@
+// Merepresentasikan model data untuk sebuah destinasi wisata.
 class Destination {
   String image;
   String name;
   String description;
   String altitude;
-  bool isFavorite;
 
   Destination({
     required this.image,
     required this.name,
     required this.description,
     required this.altitude,
-    this.isFavorite = false,
   });
 
+  // Factory constructor untuk membuat instance [Destination] dari data JSON.
+  // Menangani kemungkinan nilai null dari API dengan memberikan nilai default.
   factory Destination.fromJson(Map<String, dynamic> json) {
     return Destination(
       name: json['name'] ?? 'Unknown',
